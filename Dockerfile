@@ -5,12 +5,15 @@ FROM php:8.3-apache
 
 # GD is nodig om foto's te verkleinen, EXIF om telefoonfoto's rechtop
 # te zetten. Allebei zitten ze niet standaard in de image.
+#
+# Let op: de ontwikkelpakketten NIET opruimen met purge --auto-remove.
+# Dat haalt ook de gewone bibliotheken weg (libpng16.so.16 en zo), en
+# dan laadt GD niet meer en worden foto's niet verkleind.
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       libjpeg62-turbo-dev libpng-dev libwebp-dev libfreetype6-dev \
  && docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
  && docker-php-ext-install -j"$(nproc)" gd exif \
- && apt-get purge -y --auto-remove libpng-dev libwebp-dev libfreetype6-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # .htaccess werkt alleen als Apache hem mag lezen, en de galerij heeft
