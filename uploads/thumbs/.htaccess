@@ -1,0 +1,40 @@
+# Geen php of andere code uitvoeren in deze map.
+# Foto's en video's mogen wel gewoon opgevraagd worden.
+#
+# Let op: php_flag staat bewust binnen <IfModule>. Zonder die haakjes
+# geeft een server die php anders draait (fpm of cgi) een foutmelding
+# op elke pagina.
+
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php5.c>
+  php_flag engine off
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType text/plain .php .php3 .php4 .php5 .php7 .php8 .phtml .phps .pl .py .cgi .sh
+  RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .cgi .pl .py
+</IfModule>
+
+# Dit is het slot dat op vrijwel elke server werkt: zulke bestanden
+# worden hier gewoon geweigerd.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule \.(php|phtml|php3|php4|php5|php7|php8|phps|cgi|pl|py|sh)$ - [F,L]
+</IfModule>
+
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|php8|phps|cgi|pl|py|sh)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+Options -ExecCGI -Indexes

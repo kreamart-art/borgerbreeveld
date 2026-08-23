@@ -1,0 +1,52 @@
+# Instellingen voor de hele pagina.
+#
+# Werkt je server met mod_php, dan kun je de php_value-regels hieronder
+# gebruiken. Draait php als fpm of cgi, dan doen ze niets en gebruik je
+# het bestand .user.ini in dezelfde map. In LEES-MIJ.md staat hoe je
+# ziet wat jouw server doet.
+
+# --- Grote video's toestaan (alleen bij mod_php) ------------------
+# Deze regels staan aan. Ze zitten binnen <IfModule>, dus een server die
+# php anders draait slaat ze gewoon over en geeft geen foutmelding.
+# Zet post_max_size altijd wat hoger dan upload_max_filesize.
+
+<IfModule mod_php.c>
+  php_value upload_max_filesize 200M
+  php_value post_max_size 220M
+  php_value max_execution_time 600
+  php_value max_input_time 600
+</IfModule>
+<IfModule mod_php7.c>
+  php_value upload_max_filesize 200M
+  php_value post_max_size 220M
+  php_value max_execution_time 600
+  php_value max_input_time 600
+</IfModule>
+
+# --- Kleine dingen -----------------------------------------------
+
+# De handleiding en de controlepagina zijn niet voor bezoekers.
+<FilesMatch "\.(md|markdown)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+
+# Geen lijst met bestanden tonen als er geen index is.
+Options -Indexes
+
+# Het bestandstype van het app-manifest (voor het dashboard op de telefoon).
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+# De gegevensmap is nooit rechtstreeks te bereiken.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^data/ - [F,L]
+</IfModule>

@@ -1,0 +1,10 @@
+In deze map staan de twee banners van de website.
+
+  header.jpg          de brede collage, boven de hoofdpagina
+  header-pagina.jpg   de rustiger foto, boven de andere pagina's
+
+Van allebei staan er ook kleinere en modernere versies naast
+(-800.jpg en .webp), zodat de pagina snel laadt op een telefoon.
+
+Wil je een andere banner? Vervang dan alle bestanden van die naam.
+Haal je ze allemaal weg, dan blijft het gewoon een groen vlak.

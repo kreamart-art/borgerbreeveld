@@ -1,0 +1,1715 @@
+/* ------------------------------------------------------------------
+   Vormgeving van de herdenkingspagina.
+   Warm, rustig en leesbaar, ook op een kleine telefoon.
+   ------------------------------------------------------------------ */
+
+:root {
+    --ivoor:        #faf6ee;
+    --ivoor-warm:   #f3ece0;
+    --groen:        #12402f;
+    --groen-diep:   #0b2a1f;
+    --goud:         #b0813a;
+    --goud-zacht:   #d9b878;
+    --rood:         #8c2f2a;
+    --inkt:         #23201b;
+    --inkt-zacht:   #5d564c;
+    --lijn:         #e0d6c4;
+
+    --serif:  Georgia, "Iowan Old Style", "Palatino Linotype", Palatino,
+              "Times New Roman", serif;
+    --sans:   -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+              "Helvetica Neue", Arial, sans-serif;
+
+    --breed:  1080px;
+    --smal:   680px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+
+body {
+    margin: 0;
+    background: var(--ivoor);
+    color: var(--inkt);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3 {
+    font-family: var(--serif);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 .6rem;
+    color: var(--groen-diep);
+}
+
+a { color: var(--groen); }
+a:hover { color: var(--goud); }
+
+img, video { max-width: 100%; display: block; }
+
+:focus-visible {
+    outline: 3px solid var(--goud);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.visueel-verborgen {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.overslaan {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--groen); color: #fff;
+    padding: .8rem 1.2rem; z-index: 100;
+}
+.overslaan:focus { left: 0; }
+
+/* ----------------------------------------------------------------
+   Balk bovenaan
+   ---------------------------------------------------------------- */
+
+.balk {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(250, 246, 238, .94);
+    backdrop-filter: saturate(150%) blur(8px);
+    border-bottom: 1px solid var(--lijn);
+}
+
+.balk-binnen {
+    max-width: var(--breed); margin: 0 auto;
+    padding: .55rem 1rem;
+    display: flex; align-items: center; gap: 1rem;
+}
+
+.balk-naam {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--groen-diep);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.balk-rechts {
+    margin-left: auto;
+    display: flex; align-items: center; gap: .6rem;
+}
+
+/* De knop in de balk is wat kleiner dan die in de pagina zelf. */
+.balk-cta {
+    white-space: nowrap;
+    padding: .6rem 1.1rem;
+    font-size: .66rem;
+}
+
+/* Op een telefoon past de lange tekst niet naast het menu. */
+.balk-cta-kort { display: none; }
+
+/* De naam mag inkorten in plaats van de knop van de rand duwen. */
+.balk-naam {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ----------------------------------------------------------------
+   Het uitklapmenu
+   ---------------------------------------------------------------- */
+
+.menu-wikkel { position: relative; }
+
+.menu-knop {
+    display: flex; align-items: center; gap: .4rem;
+    font-family: var(--sans);
+    font-size: .66rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--groen);
+    background: transparent;
+    border: 1px solid var(--lijn);
+    border-radius: 2px;
+    padding: .6rem .9rem;
+    cursor: pointer;
+    transition: border-color .2s ease, background-color .2s ease, color .2s ease;
+}
+.menu-knop:hover {
+    border-color: var(--goud);
+    background: var(--ivoor-warm);
+}
+
+.menu-pijl {
+    width: 14px; height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .2s ease;
+}
+
+/* Staat het menu open, dan wijst het pijltje omhoog. */
+.menu-knop[aria-expanded="true"] {
+    border-color: var(--goud);
+    background: var(--ivoor-warm);
+}
+.menu-knop[aria-expanded="true"] .menu-pijl { transform: rotate(180deg); }
+
+.menu-lijst {
+    position: absolute;
+    top: calc(100% + .5rem);
+    right: 0;
+    min-width: 220px;
+    background: var(--ivoor);
+    border: 1px solid var(--lijn);
+    border-radius: 4px;
+    box-shadow: 0 16px 40px rgba(35, 32, 27, .18);
+    padding: .4rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+}
+.menu-lijst[hidden] { display: none; }
+
+.menu-lijst a {
+    text-decoration: none;
+    color: var(--inkt);
+    font-size: .78rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .7rem .8rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    transition: color .2s ease, background-color .2s ease;
+}
+.menu-lijst a:hover {
+    background: var(--ivoor-warm);
+    color: var(--groen);
+}
+
+/* ----------------------------------------------------------------
+   Hero
+   ---------------------------------------------------------------- */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(120% 90% at 50% 0%, #164b37 0%, var(--groen) 45%, var(--groen-diep) 100%);
+    color: #f6f1e6;
+    text-align: center;
+    padding: 3.2rem 1rem 3.6rem;
+}
+
+/* Op de hoofdpagina vult de banner een hoog vlak. */
+.hero-groot {
+    min-height: min(82vh, 760px);
+    display: flex;
+    align-items: flex-end;
+    padding-top: 6rem;
+    padding-bottom: 4rem;
+}
+
+/* Op de andere pagina's is de banner een smallere band met de
+   paginakop erover. */
+.hero-klein {
+    min-height: min(50vh, 460px);
+    display: flex;
+    align-items: flex-end;
+    padding-top: 4rem;
+    padding-bottom: 2.4rem;
+}
+
+/* Zijn gezicht staat rechts van het midden. De uitsnede houdt het
+   heel, de tekst gaat naar de donkere linkerkant. */
+.hero-klein .banner img { object-position: 60% 34%; }
+
+/* De kop lijnt uit met de tekstkolom van de pagina eronder. */
+.hero-klein .hero-binnen {
+    max-width: var(--smal);
+    text-align: left;
+}
+
+.hero-boven {
+    font-family: var(--sans);
+    color: var(--goud-zacht);
+    font-size: .68rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    margin: 0 0 .5rem;
+}
+
+.hero-klein h1 {
+    font-size: clamp(1.8rem, 4.4vw, 2.8rem);
+    margin-bottom: 0;
+}
+
+/* De banner vult het hele groene vlak. De tekst staat eroverheen. */
+.banner {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    line-height: 0;
+}
+
+.banner-beeld,
+.banner picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 42%;
+    display: block;
+}
+
+/* Op de andere pagina's blijft de foto zoals hij is: geen sluier
+   eroverheen. De tekst staat op de donkere linkerkant en heeft alleen
+   een zachte schaduw nodig. */
+.hero-klein .banner-vervaging { background: none; }
+
+.banner-vervaging {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(to bottom,
+            rgba(8, 26, 19, .42) 0%,
+            rgba(8, 26, 19, .10) 26%,
+            rgba(8, 26, 19, .38) 52%,
+            rgba(8, 26, 19, .86) 76%,
+            rgba(9, 32, 24, .97) 90%,
+            var(--groen-diep) 100%);
+}
+
+.hero-binnen {
+    max-width: var(--smal);
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+/* Tekst over een foto heeft altijd een beetje schaduw nodig, ook als de
+   sluier al donker is. */
+.hero-groot .hero-binnen {
+    text-shadow: 0 2px 14px rgba(0, 0, 0, .55);
+}
+
+.hero-klein .hero-binnen {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, .75), 0 1px 30px rgba(0, 0, 0, .5);
+}
+
+
+
+.portret {
+    width: 190px; height: 190px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 1.6rem;
+    border: 3px solid rgba(217, 184, 120, .55);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, .32);
+    background: var(--groen-diep);
+}
+
+/* Met een banner eronder valt de losse ronde portretfoto weg: de
+   afbeelding toont hem al. */
+.hero-onder-banner .portret { display: none; }
+
+.portret-leeg {
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, .06);
+    font-family: var(--serif);
+    font-size: 3.4rem;
+    color: var(--goud-zacht);
+    letter-spacing: .05em;
+}
+
+.hero h1 {
+    color: #fdfaf3;
+    font-size: clamp(2rem, 7vw, 3.1rem);
+    margin-bottom: .3rem;
+}
+
+.hero-groot h1 {
+    font-size: clamp(2.1rem, 5.2vw, 3.6rem);
+    letter-spacing: .01em;
+}
+
+/* De gouden regel met de datums krijgt een eigen streepje eronder. */
+.hero-groot .datums {
+    color: #e6cb98;
+    margin-bottom: 0;
+    position: relative;
+}
+
+.datums {
+    color: var(--goud-zacht);
+    font-size: .78rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    margin: 0 0 1.4rem;
+}
+
+.hero-intro {
+    color: #e8e0d1;
+    font-size: 1.02rem;
+    margin: 0 auto 1.8rem;
+    max-width: 34rem;
+}
+
+.hero-groot .hero-intro {
+    color: #efe8db;
+    max-width: 31rem;
+}
+
+/* ----------------------------------------------------------------
+   Knoppen
+   ---------------------------------------------------------------- */
+
+.knop {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: .85rem 1.5rem;
+    border: 1px solid var(--groen);
+    background: var(--groen);
+    color: #fdfaf3;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.knop:hover { background: var(--groen-diep); border-color: var(--groen-diep); color: #fff; }
+
+.knop-licht {
+    background: transparent;
+    border-color: var(--goud-zacht);
+    color: var(--goud-zacht);
+}
+.knop-licht:hover { background: var(--goud); border-color: var(--goud); color: #fff; }
+
+.knop-groot { padding: 1rem 2rem; font-size: .78rem; }
+
+.knop-klein { padding: .5rem .85rem; font-size: .65rem; }
+
+.knop-uit { background: var(--goud); border-color: var(--goud); }
+.knop-uit:hover { background: #966c2c; border-color: #966c2c; }
+
+.knop-stil {
+    background: transparent; color: var(--inkt-zacht);
+    border-color: var(--lijn);
+}
+.knop-stil:hover { background: var(--ivoor-warm); color: var(--groen); border-color: var(--goud); }
+
+.knop-gevaar {
+    background: transparent; color: var(--rood); border-color: rgba(140, 47, 42, .4);
+}
+.knop-gevaar:hover { background: var(--rood); color: #fff; border-color: var(--rood); }
+
+.knop[disabled] { opacity: .55; cursor: progress; }
+
+/* ----------------------------------------------------------------
+   Secties
+   ---------------------------------------------------------------- */
+
+.sectie { padding: 3.4rem 1rem; }
+.sectie-zacht { background: var(--ivoor-warm); }
+.sectie-groen { background: var(--groen-diep); color: #e4ddd0; }
+.sectie-groen h2, .sectie-groen h3 { color: #fdfaf3; }
+
+.binnen { max-width: var(--breed); margin: 0 auto; }
+.smal   { max-width: var(--smal); }
+
+.sectie h2 {
+    font-size: clamp(1.6rem, 4.5vw, 2.1rem);
+    margin-bottom: .4rem;
+}
+
+.sectie h2::after {
+    content: "";
+    display: block;
+    width: 44px; height: 2px;
+    background: var(--goud);
+    margin: .9rem 0 1.4rem;
+}
+
+.sectie-intro {
+    color: var(--inkt-zacht);
+    margin: 0 0 1.8rem;
+    max-width: 40rem;
+}
+.sectie-groen .sectie-intro { color: #bcb3a3; }
+
+.lopend { margin: 0 0 1.15rem; }
+.lopend:first-of-type::first-letter {
+    font-family: var(--serif);
+    font-size: 2.75rem;
+    float: left;
+    line-height: 1;
+    padding: .04em .09em 0 0;
+    color: var(--goud);
+}
+
+.leeg {
+    background: rgba(176, 129, 58, .08);
+    border: 1px dashed rgba(176, 129, 58, .45);
+    border-radius: 4px;
+    padding: 1.6rem;
+    color: var(--inkt-zacht);
+    text-align: center;
+}
+
+/* ----------------------------------------------------------------
+   Tijdlijn
+   ---------------------------------------------------------------- */
+
+.tijdlijn {
+    list-style: none;
+    margin: 0; padding: 0;
+    position: relative;
+}
+
+.tijdlijn::before {
+    content: "";
+    position: absolute;
+    left: 6px; top: .5rem; bottom: .5rem;
+    width: 1px;
+    background: linear-gradient(to bottom,
+        rgba(217, 184, 120, .1), rgba(217, 184, 120, .5), rgba(217, 184, 120, .1));
+}
+
+.tijdlijn li {
+    position: relative;
+    padding: 0 0 1.9rem 2rem;
+}
+.tijdlijn li:last-child { padding-bottom: 0; }
+
+.tijdlijn-stip {
+    position: absolute;
+    left: 0; top: .45rem;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: var(--groen-diep);
+    border: 2px solid var(--goud);
+}
+
+.tijdlijn-wanneer {
+    margin: 0 0 .2rem;
+    font-size: .7rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--goud-zacht);
+}
+
+.tijdlijn-wat { font-size: 1.15rem; margin: 0 0 .3rem; }
+
+/* De koppen in de tijdlijn en in meldingen krijgen geen gouden streepje,
+   dat is alleen voor de kop boven een sectie.
+   Let op de zwaarte: .sectie h2::after weegt zwaarder dan een losse
+   klasse, dus die moeten we hier overtreffen. */
+.sectie h2.tijdlijn-wat::after,
+.sectie .melding h2::after,
+.melding h2::after { content: none; }
+
+.tijdlijn-tekst { margin: 0; color: #c2baab; }
+
+/* ----------------------------------------------------------------
+   Galerij
+   ---------------------------------------------------------------- */
+
+.galerij {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.tegel {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--lijn);
+    background: #fff;
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    position: relative;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.tegel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(35, 32, 27, .13);
+    border-color: var(--goud-zacht);
+}
+
+.tegel img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: var(--ivoor-warm);
+}
+
+.tegel-video {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(150deg, var(--groen) 0%, var(--groen-diep) 100%);
+}
+.tegel-video svg { width: 44px; height: 44px; fill: var(--goud-zacht); }
+
+.label-video {
+    position: absolute;
+    top: .55rem; left: .55rem;
+    background: rgba(11, 42, 31, .88);
+    color: var(--goud-zacht);
+    font-size: .6rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    padding: .25rem .5rem;
+    border-radius: 2px;
+}
+
+.tegel-onder {
+    display: block;
+    padding: .55rem .7rem .7rem;
+    font-size: .72rem;
+    color: var(--inkt-zacht);
+    line-height: 1.4;
+}
+
+/* ----------------------------------------------------------------
+   Herinneringen
+   ---------------------------------------------------------------- */
+
+.kaarten {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.1rem;
+}
+
+.kaart {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-left: 3px solid var(--goud);
+    border-radius: 3px;
+    padding: 1.4rem 1.4rem 1.2rem;
+    position: relative;
+}
+
+.kaart-teken {
+    width: 26px; height: 26px;
+    fill: rgba(176, 129, 58, .3);
+    margin-bottom: .3rem;
+}
+
+.kaart-tekst {
+    font-family: var(--serif);
+    font-size: 1.02rem;
+    margin: 0 0 1rem;
+    color: #35302a;
+}
+
+.kaart-naam {
+    margin: 0;
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--groen);
+}
+
+.kaart-relatie {
+    display: block;
+    letter-spacing: .06em;
+    text-transform: none;
+    color: var(--inkt-zacht);
+    font-size: .8rem;
+    margin-top: .15rem;
+}
+
+/* ----------------------------------------------------------------
+   Formulier
+   ---------------------------------------------------------------- */
+
+.formulier { margin-top: 1.4rem; }
+
+.veld { margin-bottom: 1.5rem; }
+
+.veld label {
+    display: block;
+    font-size: .7rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--groen);
+    margin-bottom: .45rem;
+}
+
+.verplicht {
+    color: var(--rood);
+    letter-spacing: .1em;
+    margin-left: .4rem;
+}
+
+input[type="text"], input[type="email"], input[type="password"], textarea {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 16px; /* voorkomt inzoomen op iPhone */
+    padding: .8rem .9rem;
+    border: 1px solid var(--lijn);
+    border-radius: 3px;
+    background: #fff;
+    color: var(--inkt);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+input[type="text"]:focus, input[type="email"]:focus,
+input[type="password"]:focus, textarea:focus {
+    border-color: var(--goud);
+    box-shadow: 0 0 0 3px rgba(176, 129, 58, .16);
+}
+
+textarea { resize: vertical; min-height: 9rem; line-height: 1.6; }
+
+.hint {
+    font-size: .82rem;
+    color: var(--inkt-zacht);
+    margin: .45rem 0 0;
+}
+
+.honingpot {
+    position: absolute;
+    left: -9999px;
+    width: 1px; height: 1px;
+    overflow: hidden;
+}
+
+.sleepvlak {
+    position: relative;
+    border: 2px dashed var(--lijn);
+    border-radius: 5px;
+    background: #fff;
+    padding: 1.9rem 1.2rem;
+    text-align: center;
+    transition: border-color .2s ease, background-color .2s ease;
+}
+.sleepvlak.sleep-actief {
+    border-color: var(--goud);
+    background: rgba(176, 129, 58, .07);
+}
+
+.sleepvlak input[type="file"] {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.sleep-teken {
+    width: 30px; height: 30px;
+    fill: none;
+    stroke: var(--goud);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    margin: 0 auto .6rem;
+}
+
+.sleep-tekst { margin: 0; color: var(--inkt); }
+.sleep-link { color: var(--groen); text-decoration: underline; }
+
+.bestandenlijst {
+    list-style: none;
+    margin: .9rem 0 0;
+    padding: 0;
+}
+.bestandenlijst li {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding: .55rem .7rem;
+    border: 1px solid var(--lijn);
+    border-radius: 3px;
+    background: #fff;
+    margin-bottom: .4rem;
+    font-size: .85rem;
+}
+.bestandenlijst .grootte { color: var(--inkt-zacht); white-space: nowrap; }
+.bestandenlijst li.tegroot { border-color: var(--rood); background: rgba(140, 47, 42, .06); }
+.bestandenlijst li.tegroot .grootte { color: var(--rood); font-weight: 600; }
+.bestandenlijst .waarschuwing { display: block; color: var(--rood); font-size: .8rem; }
+
+.hint-versturen { min-height: 1.2rem; }
+
+/* ----------------------------------------------------------------
+   Meldingen
+   ---------------------------------------------------------------- */
+
+.melding {
+    border-radius: 4px;
+    padding: 1.2rem 1.3rem;
+    margin: 0 0 1.6rem;
+    border: 1px solid;
+}
+.melding h3 { margin: 0 0 .4rem; font-size: 1.15rem; }
+.melding p:last-child, .melding ul:last-child { margin-bottom: 0; }
+.melding ul { margin: .5rem 0 0; padding-left: 1.2rem; }
+
+.melding-goed {
+    background: rgba(18, 64, 47, .06);
+    border-color: rgba(18, 64, 47, .3);
+    color: var(--groen-diep);
+}
+.melding-fout {
+    background: rgba(140, 47, 42, .07);
+    border-color: rgba(140, 47, 42, .35);
+    color: #6f2622;
+}
+.melding-fout h3 { color: #6f2622; }
+
+/* ----------------------------------------------------------------
+   Voettekst
+   ---------------------------------------------------------------- */
+
+.voet {
+    background: var(--groen-diep);
+    color: #b9b1a2;
+    padding: 3rem 1rem 2.4rem;
+    font-size: .9rem;
+}
+
+.voet a { color: var(--goud-zacht); }
+.voet a:hover { color: #fff; }
+
+.voet-rechten { max-width: 40rem; margin: 0 0 .9rem; }
+.voet-contact { margin: 0 0 2rem; }
+
+.voet-kop {
+    font-size: .7rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #8d8577;
+    font-family: var(--sans);
+    margin: 0 0 .7rem;
+}
+.voet-kop::after { content: none; }
+
+.bronnen { list-style: none; margin: 0 0 2rem; padding: 0; }
+.bronnen li { margin-bottom: .45rem; }
+.bronnen a { word-break: break-word; }
+
+.voet-naam {
+    font-family: var(--serif);
+    color: #8d8577;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    padding-top: 1.4rem;
+    margin: 0;
+}
+
+/* ----------------------------------------------------------------
+   Lichtbak
+   ---------------------------------------------------------------- */
+
+.lichtbak {
+    position: fixed; inset: 0; z-index: 90;
+    background: rgba(8, 22, 17, .95);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3.6rem 1rem 4.4rem;
+}
+.lichtbak[hidden] { display: none; }
+
+.lichtbak-inhoud {
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    gap: .9rem;
+}
+
+.lichtbak-inhoud img, .lichtbak-inhoud video {
+    max-width: min(100%, 1200px);
+    max-height: calc(100vh - 9rem);
+    width: auto;
+    border-radius: 3px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+    background: #000;
+}
+
+.lichtbak-onderschrift {
+    color: #cfc6b5;
+    font-size: .78rem;
+    letter-spacing: .1em;
+    text-align: center;
+}
+
+.lichtbak button {
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(217, 184, 120, .3);
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--goud-zacht);
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background-color .2s ease;
+}
+.lichtbak button:hover { background: rgba(217, 184, 120, .25); color: #fff; }
+
+.lichtbak button svg {
+    width: 22px; height: 22px;
+    fill: none; stroke: currentColor;
+    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+
+.lichtbak-sluit {
+    position: absolute; top: 1rem; right: 1rem;
+    width: 44px; height: 44px;
+}
+
+.lichtbak-pijl {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 46px; height: 46px;
+}
+.lichtbak-vorige   { left: .7rem; }
+.lichtbak-volgende { right: .7rem; }
+
+/* ----------------------------------------------------------------
+   Beheer
+   ---------------------------------------------------------------- */
+
+.beheer-body { background: var(--ivoor-warm); }
+
+.inlog {
+    max-width: 380px;
+    margin: 12vh auto;
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 4px;
+    padding: 2rem;
+}
+.inlog h1 { font-size: 1.6rem; }
+
+.beheer-balk {
+    background: var(--groen-diep);
+    color: #e4ddd0;
+    padding: .8rem 0;
+    position: sticky; top: 0; z-index: 30;
+}
+.beheer-balk-binnen {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap;
+    padding: 0 1rem;
+}
+.beheer-titel {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: #fdfaf3;
+}
+.beheer-links { display: flex; gap: 1.2rem; }
+.beheer-links a {
+    color: var(--goud-zacht);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+.beheer-links a:hover { color: #fff; text-decoration: underline; }
+
+.beheer-hoofd { padding: 1.8rem 1rem 4rem; }
+.beheer-uitleg { color: var(--inkt-zacht); max-width: 42rem; margin-top: 0; }
+
+.filters { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.2rem 0 1.8rem; }
+.filter {
+    text-decoration: none;
+    border: 1px solid var(--lijn);
+    background: #fff;
+    color: var(--inkt-zacht);
+    padding: .5rem .9rem;
+    border-radius: 999px;
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+.filter span {
+    display: inline-block;
+    margin-left: .45rem;
+    color: var(--goud);
+    font-weight: 700;
+}
+.filter-aan { background: var(--groen); border-color: var(--groen); color: #fdfaf3; }
+.filter-aan span { color: var(--goud-zacht); }
+
+.portret-strook {
+    display: flex; align-items: center; gap: 1.2rem;
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1.8rem;
+}
+.portret-strook img {
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.portret-strook p { margin: 0 0 .5rem; }
+
+.inzending {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 4px;
+    padding: 1.3rem;
+    margin-bottom: 1.4rem;
+}
+
+.inzending-kop {
+    display: flex; justify-content: space-between; gap: 1rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--lijn);
+    padding-bottom: .9rem;
+    margin-bottom: 1rem;
+}
+.inzending-kop h2 { font-size: 1.25rem; margin: 0; }
+.inzending-relatie { margin: .15rem 0 0; color: var(--goud); font-size: .9rem; }
+.inzending-meta { margin: .3rem 0 0; color: var(--inkt-zacht); font-size: .82rem; }
+
+.inzending-telling { display: flex; gap: .4rem; align-items: flex-start; flex-wrap: wrap; }
+.merk {
+    font-size: .64rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: .3rem .6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+.merk-wacht { background: rgba(140, 47, 42, .1); color: var(--rood); }
+.merk-aan   { background: rgba(18, 64, 47, .1); color: var(--groen); }
+
+.inzending-tekst {
+    background: var(--ivoor);
+    border: 1px solid var(--lijn);
+    border-left: 3px solid var(--lijn);
+    border-radius: 3px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.1rem;
+}
+.inzending-tekst.aan { border-left-color: var(--groen); }
+.inzending-tekst p { margin: 0 0 .9rem; font-family: var(--serif); }
+
+.beheer-raster {
+    list-style: none; margin: 0 0 1.1rem; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 1rem;
+}
+
+.beheer-item {
+    border: 1px solid var(--lijn);
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--ivoor);
+    display: flex; flex-direction: column;
+}
+.beheer-item.aan { border-color: var(--groen); box-shadow: inset 0 0 0 2px rgba(18, 64, 47, .18); }
+
+.beheer-item img, .beheer-item video {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: #000;
+}
+
+.beheer-item-meta {
+    margin: 0;
+    padding: .55rem .7rem 0;
+    font-size: .74rem;
+    color: var(--inkt-zacht);
+}
+.beheer-orig { word-break: break-all; color: #8d8577; }
+
+.beheer-knoppen {
+    display: flex; flex-direction: column; gap: .4rem;
+    padding: .7rem;
+    margin-top: auto;
+}
+
+.verwijderform { border-top: 1px solid var(--lijn); padding-top: 1rem; }
+
+/* ----------------------------------------------------------------
+   Kleine schermen
+   ---------------------------------------------------------------- */
+
+@media (max-width: 560px) {
+    body { font-size: 16px; }
+    html { scroll-padding-top: 104px; }
+    .sectie { padding: 2.6rem .9rem; }
+    .hero { padding: 2.4rem .9rem 2.8rem; }
+    .portret { width: 150px; height: 150px; }
+    .hero-groot { min-height: min(78vh, 620px); padding-top: 4rem; }
+    .galerij { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: .7rem; }
+    .kaarten { grid-template-columns: 1fr; }
+    .beheer-raster { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .balk-naam { font-size: .95rem; }
+    .lichtbak { padding: 3.4rem .5rem 4rem; }
+    .lichtbak-pijl { width: 40px; height: 40px; }
+}
+
+/* Rustiger voor wie liever geen beweging ziet. */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* ----------------------------------------------------------------
+   De oproep om iets in te sturen
+   ---------------------------------------------------------------- */
+
+.oproep { text-align: center; }
+
+.oproep-teken {
+    width: 32px; height: 32px;
+    margin: 0 auto 1rem;
+    fill: none;
+    stroke: var(--goud-zacht);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.oproep h2::after { margin-left: auto; margin-right: auto; }
+
+.oproep-tekst {
+    color: #c2baab;
+    max-width: 34rem;
+    margin: 0 auto 2rem;
+}
+
+/* De knop onderaan een pagina, die naar de volgende pagina wijst. */
+.verder {
+    margin: 2.6rem 0 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--lijn);
+}
+
+.sectie-groen .verder { border-top-color: rgba(217, 184, 120, .22); }
+
+.melding-verder { margin-top: 1rem; }
+
+/* De pagina's onder elkaar in de voettekst. */
+.voet-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.4rem;
+    margin: 0 0 2rem;
+}
+
+.voet-menu a {
+    font-size: .7rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+.voet-menu a:hover { text-decoration: underline; }
+
+/* De pagina waarop je staat, staat in het menu in het goud. */
+.menu-lijst a[aria-current="page"] {
+    color: var(--goud);
+    background: var(--ivoor-warm);
+}
+
+/* ----------------------------------------------------------------
+   Bladeren door de galerij
+   ---------------------------------------------------------------- */
+
+.galerij-teller {
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--inkt-zacht);
+    margin: -1rem 0 1.4rem;
+}
+
+.bladeren {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: .5rem 1rem;
+    margin-top: 2.4rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid var(--lijn);
+}
+
+.bladeren-nummers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem;
+    justify-content: center;
+}
+
+.bladeren-nummers a,
+.bladeren-nu {
+    min-width: 2.2rem;
+    text-align: center;
+    padding: .45rem .5rem;
+    border-radius: 3px;
+    font-size: .82rem;
+    text-decoration: none;
+}
+
+.bladeren-nummers a { color: var(--inkt-zacht); }
+.bladeren-nummers a:hover { background: var(--ivoor-warm); color: var(--groen); }
+
+.bladeren-nu {
+    background: var(--groen);
+    color: #fdfaf3;
+    font-weight: 600;
+}
+
+/* Een video met een beeld eruit: de foto met een afspeelknop erover. */
+.tegel-video-beeld {
+    position: relative;
+    display: block;
+    background: var(--groen-diep);
+}
+
+.tegel-video-beeld img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.tegel-speel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom,
+        rgba(8, 26, 19, .1) 0%, rgba(8, 26, 19, .38) 100%);
+}
+
+.tegel-speel svg {
+    width: 46px; height: 46px;
+    fill: #fdfaf3;
+    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, .6));
+    transition: transform .25s ease;
+}
+
+.tegel:hover .tegel-speel svg { transform: scale(1.12); }
+
+/* ----------------------------------------------------------------
+   Het overzicht in cijfers, bovenaan het beheer
+   ---------------------------------------------------------------- */
+
+.cijfers {
+    list-style: none;
+    margin: 1.4rem 0 1rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: .8rem;
+    max-width: 1100px;
+}
+
+.cijfers li {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 4px;
+    padding: 1rem 1.1rem;
+}
+
+.cijfers .cijfer {
+    display: block;
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    line-height: 1.1;
+    color: var(--groen-diep);
+}
+
+.cijfers .cijfer-bij {
+    display: block;
+    font-size: .68rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--inkt-zacht);
+    margin-top: .3rem;
+}
+
+/* Staat er iets te wachten, dan valt dat vakje op. */
+.cijfer-let-op {
+    border-color: rgba(140, 47, 42, .45);
+    background: rgba(140, 47, 42, .04);
+}
+.cijfer-let-op .cijfer { color: var(--rood); }
+
+.beheer-laatste {
+    color: var(--inkt-zacht);
+    font-size: .85rem;
+    margin: 0 0 .4rem;
+}
+
+/* Knoppen om een hele inzending in één keer te doen. */
+.alles-knoppen {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.alles-knoppen form { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+.alles-aantal {
+    font-size: .74rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--inkt-zacht);
+}
+
+.meer-tonen { margin: 0 0 1.2rem; }
+
+/* De onderste regel: zijn naam links, het inloglinkje voor de familie rechts. */
+.voet-onder {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    padding-top: 1.4rem;
+}
+
+.voet-onder .voet-naam {
+    border-top: 0;
+    padding-top: 0;
+    margin: 0;
+}
+
+.voet-beheer {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-size: .68rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #8d8577;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 2px;
+    padding: .5rem .8rem;
+    transition: color .2s ease, border-color .2s ease;
+}
+.voet-beheer:hover {
+    color: var(--goud-zacht);
+    border-color: rgba(217, 184, 120, .4);
+}
+
+.voet-beheer svg {
+    width: 13px; height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ----------------------------------------------------------------
+   De controlepagina
+   ---------------------------------------------------------------- */
+
+.controle { padding: 2.5rem 1rem 4rem; max-width: 760px; }
+.controle h1 { font-size: 2rem; margin-bottom: 1.4rem; }
+.controle .melding h2 { margin: 0 0 .4rem; font-size: 1.2rem; }
+.controle code {
+    background: var(--ivoor-warm);
+    padding: .1rem .35rem;
+    border-radius: 2px;
+    font-size: .9em;
+}
+
+.controlelijst { list-style: none; margin: 1.6rem 0; padding: 0; }
+
+.controlelijst li {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-left: 4px solid var(--lijn);
+    border-radius: 3px;
+    padding: 1rem 1.1rem;
+    margin-bottom: .6rem;
+}
+
+.stand-merk {
+    display: inline-block;
+    font-size: .62rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: .22rem .5rem;
+    border-radius: 999px;
+    margin-bottom: .5rem;
+}
+
+.stand-goed { border-left-color: var(--groen); }
+.stand-goed .stand-merk { background: rgba(18, 64, 47, .1); color: var(--groen); }
+
+.stand-letop { border-left-color: var(--goud); }
+.stand-letop .stand-merk { background: rgba(176, 129, 58, .14); color: #8a6425; }
+
+.stand-fout { border-left-color: var(--rood); }
+.stand-fout .stand-merk { background: rgba(140, 47, 42, .1); color: var(--rood); }
+
+.controle-wat { margin: 0; font-weight: 600; color: var(--inkt); }
+.controle-uitleg { margin: .4rem 0 0; color: var(--inkt-zacht); font-size: .92rem; }
+
+/* ----------------------------------------------------------------
+   De balk op een telefoon
+   ---------------------------------------------------------------- */
+
+@media (max-width: 620px) {
+    .balk-binnen { padding: .5rem .8rem; gap: .5rem; }
+    .balk-naam { font-size: .92rem; }
+    .balk-rechts { gap: .4rem; }
+
+    .balk-cta-lang { display: none; }
+    .balk-cta-kort { display: inline; }
+
+    .balk-cta { padding: .6rem .9rem; }
+    .menu-knop { padding: .6rem .7rem; letter-spacing: .1em; }
+}
+
+/* Nog smaller: de naam wordt kleiner, maar het menu houdt zijn woord.
+   Een los pijltje zegt te weinig. */
+@media (max-width: 420px) {
+    .balk-naam { font-size: .82rem; }
+    .balk-cta { padding: .55rem .75rem; font-size: .62rem; }
+    .menu-knop { padding: .55rem .6rem; font-size: .62rem; }
+}
+
+/* ----------------------------------------------------------------
+   De banner op een telefoon
+   ----------------------------------------------------------------
+   Op een breed scherm vult de banner het groene vlak en staat de tekst
+   eroverheen. Op een telefoon zou daar te veel van de foto buiten beeld
+   vallen. Daarom staat de foto daar gewoon in zijn geheel bovenaan, en
+   komt de tekst eronder in het groen te staan. De foto mag dan klein
+   zijn, als je hem maar helemaal ziet.
+   ---------------------------------------------------------------- */
+
+@media (max-width: 620px) {
+
+    .hero-groot {
+        display: block;
+        min-height: 0;
+        padding: 0 0 1.3rem;
+    }
+
+    .hero-klein {
+        display: block;
+        min-height: 0;
+        padding: 0;
+    }
+
+    /* De banner staat niet meer achter de tekst, maar erboven. */
+    .hero-groot .banner,
+    .hero-klein .banner {
+        position: static;
+        line-height: 0;
+    }
+
+    /* De sluier hoort alleen over de foto te liggen, niet ook over het
+       groene vlak eronder. */
+    .hero-groot .banner-beeld,
+    .hero-klein .banner-beeld {
+        position: relative;
+    }
+
+    .hero-groot .banner-beeld,
+    .hero-klein .banner-beeld,
+    .hero-groot .banner picture,
+    .hero-klein .banner picture {
+        height: auto;
+    }
+
+    /* De hele foto, niets bijgesneden. */
+    .hero-groot .banner img,
+    .hero-klein .banner img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        object-position: center;
+    }
+
+    /* Op de hoofdpagina loopt de onderkant van de foto over in het groen.
+       Het vlak is met opzet één effen kleur, precies de kleur waarin de
+       sluier eindigt. Elk verloop hier geeft een zichtbare naad op de
+       rand van de foto, want die rand ligt op elke telefoon ergens
+       anders in dat verloop. */
+    .hero-groot {
+        background: var(--groen-diep);
+    }
+
+    /* De sluier is onderaan al eerder helemaal dicht en steekt een
+       fractie onder de foto uit, zodat de rand van de foto nergens
+       meer te zien is. */
+    /* De fade begint laag, onder de gezichten, en gaat dan snel dicht. */
+    .hero-groot .banner-vervaging {
+        inset: 0 0 -2px 0;
+        background: linear-gradient(to bottom,
+            rgba(11, 42, 31, 0) 62%,
+            rgba(11, 42, 31, .25) 77%,
+            rgba(11, 42, 31, .62) 86%,
+            rgba(11, 42, 31, .92) 92%,
+            var(--groen-diep) 96%,
+            var(--groen-diep) 100%);
+    }
+
+    /* Op de andere pagina's blijft de foto onaangeroerd: geen sluier,
+       geen groen vlak eronder. De paginakop staat op de foto zelf. */
+    .hero-klein { position: relative; }
+    .hero-klein .banner-vervaging { background: none; }
+
+    .hero-klein .hero-binnen {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-width: none;
+        text-align: left;
+        padding: 0 1rem 1rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, .8), 0 1px 26px rgba(0, 0, 0, .6);
+    }
+
+    /* Alleen op de hoofdpagina staat de naam in het groen onder de foto. */
+    .hero-groot .hero-binnen {
+        padding: .9rem 1rem 0;
+        text-align: center;
+        text-shadow: none;
+    }
+
+    .hero-groot h1 { margin-bottom: .15rem; }
+
+    .hero-klein h1 { font-size: clamp(1.6rem, 8vw, 2.2rem); }
+    .hero-groot h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); }
+}
+
+/* Op een telefoon tik je met een vinger, niet met een muis. Links in de
+   voettekst en in de balk krijgen daarom meer ruimte om te raken. */
+@media (max-width: 620px) {
+    .voet-menu {
+        gap: 0 1.2rem;
+        margin-bottom: 1.6rem;
+    }
+    .voet-menu a {
+        display: inline-block;
+        padding: .55rem 0;
+    }
+
+    .bronnen li { margin-bottom: .1rem; }
+    .bronnen a {
+        display: inline-block;
+        padding: .45rem 0;
+    }
+
+    .balk-naam {
+        padding: .5rem 0;
+    }
+
+    .voet-contact a,
+    .voet-beheer {
+        display: inline-block;
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+    }
+}
+
+/* ----------------------------------------------------------------
+   De kaart "zet het dashboard op je telefoon"
+   ---------------------------------------------------------------- */
+
+.app-kaart {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-left: 4px solid var(--goud);
+    border-radius: 4px;
+    padding: 1.2rem 3rem 1.2rem 1.3rem;
+    margin: 1.2rem 0 1.6rem;
+    max-width: 560px;
+}
+
+.app-kaart h2 {
+    font-size: 1.15rem;
+    margin: 0 0 .3rem;
+}
+.app-kaart h2::after { content: none; }
+
+.app-kaart p { margin: 0 0 .8rem; color: var(--inkt-zacht); }
+.app-kaart p:last-child { margin-bottom: 0; }
+
+.app-kaart-sluit {
+    position: absolute;
+    top: .7rem; right: .7rem;
+    width: 34px; height: 34px;
+    background: transparent;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--inkt-zacht);
+    display: flex; align-items: center; justify-content: center;
+}
+.app-kaart-sluit:hover { background: var(--ivoor-warm); color: var(--inkt); }
+.app-kaart-sluit svg {
+    width: 16px; height: 16px;
+    fill: none; stroke: currentColor;
+    stroke-width: 2; stroke-linecap: round;
+}
+
+.app-stappen ol {
+    margin: 0 0 .6rem;
+    padding-left: 1.3rem;
+}
+.app-stappen li { margin-bottom: .3rem; color: var(--inkt); }
+.app-stappen p { margin-bottom: .4rem; }
+
+.app-teken {
+    width: 16px; height: 16px;
+    vertical-align: -3px;
+    fill: none;
+    stroke: var(--groen);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#app-installeer { margin-bottom: .4rem; }
+
+/* ----------------------------------------------------------------
+   Privacy en voorwaarden
+   ---------------------------------------------------------------- */
+
+.juridisch h2 {
+    font-size: 1.25rem;
+    margin-top: 2.4rem;
+}
+.juridisch h2:first-of-type { margin-top: 1.6rem; }
+.juridisch h2::after { content: none; }
+
+.juridisch p { margin: 0 0 1rem; }
+
+.juridisch-datum {
+    color: var(--inkt-zacht);
+    font-size: .85rem;
+    margin-top: 2rem;
+}
+
+/* De twee juridische links in de voettekst, boven de paginarij. */
+.voet-juridisch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.4rem;
+    margin: 0 0 .8rem;
+}
+
+.voet-juridisch a {
+    font-size: .7rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+.voet-juridisch a:hover { text-decoration: underline; }
+
+/* Het toestemmingsvakje onder het formulier. */
+.veld-akkoord {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-left: 3px solid var(--goud);
+    border-radius: 3px;
+    padding: 1.1rem 1.2rem;
+}
+
+.akkoord {
+    display: flex;
+    align-items: flex-start;
+    gap: .7rem;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 1rem;
+    color: var(--inkt);
+    margin-bottom: 0;
+}
+
+.akkoord input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    margin: .1rem 0 0;
+    flex-shrink: 0;
+    accent-color: var(--groen);
+    cursor: pointer;
+}
+
+.veld-akkoord .hint { margin-top: .7rem; }
+
+@media (max-width: 620px) {
+    .voet-juridisch a {
+        display: inline-block;
+        padding: .55rem 0;
+    }
+}
+
+/* Wie er is ingelogd, in de balk van het dashboard. */
+.beheer-wie {
+    color: #8d8577;
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+/* Het uitklapvak om naam en tekst aan te passen. */
+.bewerken {
+    border: 1px solid var(--lijn);
+    border-radius: 3px;
+    margin-bottom: 1.1rem;
+    background: var(--ivoor);
+}
+
+.bewerken summary {
+    cursor: pointer;
+    padding: .7rem 1rem;
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--groen);
+}
+.bewerken summary:hover { color: var(--goud); }
+.bewerken[open] summary { border-bottom: 1px solid var(--lijn); }
+
+.bewerkform { padding: 1.1rem 1rem 1.2rem; }
+.bewerkform .veld { margin-bottom: 1rem; }
+.bewerkform textarea { min-height: 6rem; }
+
+/* Een inzending of bestand dat in de prullenbak ligt. */
+.beheer-item.weg {
+    opacity: .75;
+    border-style: dashed;
+}
+
+.prullenbak-uitleg {
+    background: rgba(176, 129, 58, .08);
+    border: 1px dashed rgba(176, 129, 58, .45);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    color: var(--inkt-zacht);
+    max-width: 900px;
+    margin: 0 0 1.4rem;
+}

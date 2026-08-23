@@ -1,0 +1,18 @@
+# Wat niet mee hoeft de container in.
+.git
+.gitignore
+LEES-MIJ.md
+
+# De ingestuurde bestanden en de gegevens komen van de server zelf
+# (de volumes), niet uit de image.
+uploads/*
+!uploads/.htaccess
+!uploads/index.html
+!uploads/thumbs/.htaccess
+!uploads/thumbs/index.html
+data/*
+!data/.htaccess
+!data/index.html
+
+# De uitrolhandleiding hoort niet in de container.
+DEPLOY.md

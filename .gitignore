@@ -1,0 +1,25 @@
+# Het wachtwoordbestand hoort NIET in de repo. In de repo staat
+# config-voorbeeld.php; op de server komen de echte waarden uit de
+# omgevingsvariabelen van Coolify.
+config.php
+
+# De uitrolhandleiding bevat het IP van de server en de SSH-stappen.
+# Die blijft lokaal.
+DEPLOY.md
+
+# De foto's, video's en inzendingen horen NIET in de repo.
+# Die staan op de server, op een aparte schijf (volume), zodat ze een
+# nieuwe versie van de website overleven.
+uploads/*
+!uploads/.htaccess
+!uploads/index.html
+!uploads/thumbs/
+uploads/thumbs/*
+!uploads/thumbs/.htaccess
+!uploads/thumbs/index.html
+
+data/*
+!data/.htaccess
+!data/index.html
+
+.DS_Store

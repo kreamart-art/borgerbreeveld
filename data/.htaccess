@@ -1,0 +1,24 @@
+# Deze map is niet bedoeld voor bezoekers.
+# Hier staan de inzendingen, inclusief e-mailadressen.
+
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>
+
+# php_flag staat bewust binnen <IfModule>. Zonder die haakjes geeft een
+# server die php anders draait (fpm of cgi) een foutmelding.
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php5.c>
+  php_flag engine off
+</IfModule>
+
+Options -ExecCGI -Indexes
