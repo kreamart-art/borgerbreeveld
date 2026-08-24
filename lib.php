@@ -14,6 +14,13 @@
 /* ------------------------------------------------------------------ */
 
 define('BASIS_MAP',    __DIR__);
+// Dit bestand hoort bij de website, het is geen pagina op zichzelf.
+// Vraagt iemand hem rechtstreeks op, dan geven we niets terug.
+if (!defined('MAX_BESTAND_MB')) {
+    header('HTTP/1.1 403 Forbidden');
+    exit;
+}
+
 define('UPLOAD_MAP',   __DIR__ . '/uploads');
 define('THUMB_MAP',    __DIR__ . '/uploads/thumbs');
 define('DATA_MAP',     __DIR__ . '/data');

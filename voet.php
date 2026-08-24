@@ -1,4 +1,12 @@
 <?php
+// Dit is een onderdeel van een pagina, geen pagina op zichzelf. Vraagt
+// iemand hem rechtstreeks op, dan geven we niets terug.
+if (!function_exists('h')) {
+    header('HTTP/1.1 403 Forbidden');
+    exit;
+}
+?>
+<?php
 /**
  * De onderkant van elke pagina: de voettekst met de bronnen.
  */

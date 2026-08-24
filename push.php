@@ -24,8 +24,10 @@
  * Je hoeft hier niets aan te veranderen.
  */
 
-if (!defined('BORGER')) {
-    define('BORGER', true);
+// Dit bestand hoort bij de website, het is geen pagina op zichzelf.
+if (!function_exists('h')) {
+    header('HTTP/1.1 403 Forbidden');
+    exit;
 }
 
 /* ------------------------------------------------------------------ */

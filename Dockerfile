@@ -27,12 +27,20 @@ RUN a2enmod rewrite headers \
  && a2enconf borger
 
 # Grote telefoonvideo's moeten erdoor kunnen.
+#
+# display_errors staat uit: als er ooit iets misgaat hoort de bezoeker
+# een nette pagina te zien, geen foutmelding met het pad op de server
+# erin. De fout komt gewoon in het logboek van Apache terecht, daar kun
+# je hem opzoeken met: docker logs <container>
 RUN printf 'upload_max_filesize = 200M\n\
 post_max_size = 220M\n\
 max_execution_time = 600\n\
 max_input_time = 600\n\
 memory_limit = 256M\n\
-expose_php = Off\n' > /usr/local/etc/php/conf.d/borger.ini
+expose_php = Off\n\
+display_errors = Off\n\
+display_startup_errors = Off\n\
+log_errors = On\n' > /usr/local/etc/php/conf.d/borger.ini
 
 # De website zelf.
 COPY --chown=www-data:www-data . /var/www/html/
