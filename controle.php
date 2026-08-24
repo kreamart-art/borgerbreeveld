@@ -141,7 +141,7 @@ if (!MELD_NIEUWE_INZENDING) {
 // Browsers eisen https voor meldingen, met een uitzondering: op je
 // eigen computer (localhost) mag het ook zonder.
 $gastheer = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
-$veiligeVerbinding = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+$veiligeVerbinding = verbinding_is_veilig()
     || preg_match('/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i', $gastheer);
 if (!push_mogelijk()) {
     punt($punten, 'let op', 'Deze server kan geen meldingen naar de telefoon sturen.',

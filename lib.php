@@ -755,9 +755,36 @@ function meld_nieuwe_inzending($naam, $relatie, $tekst, $aantalBestanden, $email
 }
 
 /** Het volledige webadres van het dashboard, voor in een e-mail. */
+/**
+ * Draait deze pagina achter https?
+ *
+ * Let op: staat de website achter een proxy (zoals op de server het geval
+ * is), dan komt het verzoek binnen als gewoon http en is $_SERVER['HTTPS']
+ * dus leeg, ook al zag de bezoeker wel degelijk het slotje. De proxy zet
+ * dat in een aparte kop, en die kijken we hier na.
+ */
+function verbinding_is_veilig()
+{
+    if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
+        return true;
+    }
+    foreach (['HTTP_X_FORWARDED_PROTO' => 'https', 'HTTP_X_FORWARDED_SSL' => 'on'] as $kop => $waarde) {
+        if (!isset($_SERVER[$kop])) {
+            continue;
+        }
+        // Bij meerdere proxies staan er meer waarden achter elkaar; de
+        // eerste is die van de bezoeker.
+        $eerste = strtolower(trim(explode(',', (string) $_SERVER[$kop])[0]));
+        if ($eerste === $waarde) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function beheer_adres()
 {
-    $veilig = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    $veilig = verbinding_is_veilig();
     $host   = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
     $map    = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
     return ($veilig ? 'https://' : 'http://') . $host . $map . '/beheer.php';
