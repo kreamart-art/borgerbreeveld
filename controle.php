@@ -26,7 +26,7 @@ if (empty($_SESSION['beheer'])) {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Controle</title>
         <meta name="robots" content="noindex, nofollow">
-        <link rel="stylesheet" href="assets/style.css?v=2">
+        <link rel="stylesheet" href="assets/style.css?v=3">
     </head>
     <body class="beheer-body">
         <main class="inlog">
@@ -227,7 +227,7 @@ foreach ($punten as $p) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Controle</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="assets/style.css?v=2">
+<link rel="stylesheet" href="assets/style.css?v=3">
 </head>
 <body class="beheer-body">
 <main class="binnen controle">
