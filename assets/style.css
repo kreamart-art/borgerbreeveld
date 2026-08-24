@@ -25,17 +25,19 @@
 
     /* Hoe de zijkanten van de banner wegvallen in het groen. Een gebogen
        verloop: snel wegvallen bij de rand, daarna steeds trager. */
-    --rand-uitdoving: radial-gradient(52% 260% at 50% 40%,
+    --rand-uitdoving: radial-gradient(50% 260% at 50% 40%,
         rgba(0, 0, 0, 1)   0%,
-        rgba(0, 0, 0, 1)  54%,
-        rgba(0, 0, 0, .98) 61%,
-        rgba(0, 0, 0, .93) 68%,
-        rgba(0, 0, 0, .84) 74%,
-        rgba(0, 0, 0, .70) 79%,
-        rgba(0, 0, 0, .54) 84%,
-        rgba(0, 0, 0, .37) 89%,
-        rgba(0, 0, 0, .21) 93%,
-        rgba(0, 0, 0, .09) 97%,
+        rgba(0, 0, 0, 1)  50%,
+        rgba(0, 0, 0, .98) 58%,
+        rgba(0, 0, 0, .93) 65%,
+        rgba(0, 0, 0, .84) 71%,
+        rgba(0, 0, 0, .71) 77%,
+        rgba(0, 0, 0, .55) 82%,
+        rgba(0, 0, 0, .38) 87%,
+        rgba(0, 0, 0, .22) 91%,
+        rgba(0, 0, 0, .10) 95%,
+        rgba(0, 0, 0, .03) 97%,
+        rgba(0, 0, 0, 0)   99%,
         rgba(0, 0, 0, 0)  100%);
 }
 
