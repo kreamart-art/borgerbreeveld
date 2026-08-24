@@ -31,6 +31,7 @@ En verder:
 | `beheer.php` | Het dashboard waarin de familie bepaalt wat zichtbaar wordt |
 | `controle.php` | Kijkt na of alles goed op de server staat. Weghalen als het klaar is |
 | `beheer.webmanifest`, `sw.js`, `assets/pwa/` | Maken van het dashboard een app voor op de telefoon |
+| `push.php`, `melding.php` | De meldingen op je telefoon. Hier hoef je niets in te doen |
 | `kop.php` | De balk met het menu en de banner, op elke pagina hetzelfde |
 | `voet.php` | De voettekst, op elke pagina hetzelfde |
 | `config.php` | Het wachtwoord, het contactadres en de limieten |
@@ -267,6 +268,55 @@ Wil je helemaal geen mail, zet dan `MELD_NIEUWE_INZENDING` op `false`.
 Let op: sommige hostingpakketten versturen geen mail vanaf de website.
 Werkt het niet, vraag dan bij je hosting of `mail()` aanstaat. De
 inzending zelf komt hoe dan ook gewoon binnen.
+
+### Meldingen op je telefoon
+
+Naast dat mailtje kan het dashboard je ook rechtstreeks een berichtje op
+je telefoon sturen, net zoals WhatsApp dat doet. Dat werkt ook als de app
+dichtstaat.
+
+Je krijgt er twee soorten:
+
+- **Meteen** als iemand iets instuurt.
+- **Eens per dag** een herinnering, zolang er nog iets op beoordeling
+  wacht. Nooit 's nachts: alleen tussen negen uur 's ochtends en negen
+  uur 's avonds.
+
+Aanzetten doe je zo. Log in op het dashboard, zoek het blokje
+**Meldingen op je telefoon** en tik op **Meldingen aanzetten**. Je
+telefoon vraagt dan om toestemming; die moet je geven. Daarna kun je met
+**Probeer er een** meteen zien hoe het eruitziet.
+
+Een paar dingen om te weten:
+
+- Je zet dit **per toestel** aan. Wil je ze ook op je iPad, doe het daar
+  dan nog een keer.
+- **Op een iPhone of iPad moet het dashboard eerst als app op je
+  beginscherm staan** (zie hierboven). Dat is een regel van Apple. Zolang
+  je het gewoon in Safari opent, kan het niet en legt het blokje dat ook
+  uit.
+- Heb je per ongeluk **nee** gezegd tegen de toestemming, dan kan de
+  website er niet meer opnieuw om vragen. Dat zet je zelf terug in de
+  instellingen van je telefoon, bij Meldingen.
+- Uitzetten kan altijd, met de knop **Uitzetten op dit toestel**. Het
+  adres van je telefoon wordt dan meteen gewist.
+
+Standaard is dit alleen voor het beheerderswachtwoord. Wil je dat het
+familie-account ze ook krijgt, zet dan in `config.php`:
+
+```php
+const MELDINGEN_VOOR_FAMILIE = true;
+```
+
+De familie krijgt dan alleen herinneringen over de eigen verzameling,
+nooit over wat bezoekers insturen.
+
+Nog twee dingen die goed zijn om te weten. Er is **geen externe dienst**
+voor nodig en er zijn geen sleutels of accounts die je moet aanvragen:
+de website maakt zijn eigen sleutelpaar aan, dat komt in
+`data/push-sleutels.json` te staan. En de meldingen werken **alleen op
+een adres met https** (het slotje). Op een gewone http-adres staat het
+blokje er wel, maar kan de telefoon zich niet aanmelden.
 
 ---
 

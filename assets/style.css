@@ -22,6 +22,21 @@
 
     --breed:  1080px;
     --smal:   680px;
+
+    /* Hoe de zijkanten van de banner wegvallen in het groen. Een gebogen
+       verloop: snel wegvallen bij de rand, daarna steeds trager. */
+    --rand-uitdoving: radial-gradient(52% 260% at 50% 40%,
+        rgba(0, 0, 0, 1)   0%,
+        rgba(0, 0, 0, 1)  54%,
+        rgba(0, 0, 0, .98) 61%,
+        rgba(0, 0, 0, .93) 68%,
+        rgba(0, 0, 0, .84) 74%,
+        rgba(0, 0, 0, .70) 79%,
+        rgba(0, 0, 0, .54) 84%,
+        rgba(0, 0, 0, .37) 89%,
+        rgba(0, 0, 0, .21) 93%,
+        rgba(0, 0, 0, .09) 97%,
+        rgba(0, 0, 0, 0)  100%);
 }
 
 * { box-sizing: border-box; }
@@ -261,6 +276,45 @@ img, video { max-width: 100%; display: block; }
     display: block;
     width: 100%;
     height: 100%;
+}
+
+/* De foto is even breed als de tekstkolom in de bovenbalk: van de naam
+   links tot de knop rechts. Op een breed scherm blijft er dus aan beide
+   kanten groen over.
+
+   De overgang naar dat groen is geen rechte snee en ook geen strak
+   bandje, maar een brede uitdoving met een gebogen verloop: dichtbij de
+   rand valt het beeld snel weg, daarna steeds langzamer. Zo lijkt het
+   alsof het licht op de foto naar de zijkanten wegvalt, zoals bij een
+   filmstill. Daarom staan er zoveel tussenstappen: met alleen begin en
+   eind krijg je een zichtbare veeg. */
+@media (min-width: 1080px) {
+    .hero-groot,
+    .hero-klein {
+        /* De buitenranden dieper maken, zodat de foto in schaduw
+           oplost en niet in een lichter groen vlak. */
+        background:
+            linear-gradient(to right,
+                var(--groen-diep) 0%,
+                rgba(11, 42, 31, .92) 6%,
+                rgba(11, 42, 31, .55) 13%,
+                rgba(11, 42, 31, .18) 20%,
+                rgba(11, 42, 31, 0) 27%,
+                rgba(11, 42, 31, 0) 73%,
+                rgba(11, 42, 31, .18) 80%,
+                rgba(11, 42, 31, .55) 87%,
+                rgba(11, 42, 31, .92) 94%,
+                var(--groen-diep) 100%),
+            radial-gradient(120% 90% at 50% 0%,
+                #164b37 0%, var(--groen) 45%, var(--groen-diep) 100%);
+    }
+
+    .banner-beeld {
+        max-width: calc(var(--breed) - 2rem);
+        margin: 0 auto;
+        -webkit-mask-image: var(--rand-uitdoving);
+                mask-image: var(--rand-uitdoving);
+    }
 }
 
 .banner img {
@@ -1592,6 +1646,171 @@ textarea { resize: vertical; min-height: 9rem; line-height: 1.6; }
 }
 
 #app-installeer { margin-bottom: .4rem; }
+
+/* ----------------------------------------------------------------
+   Meldingen op de telefoon
+   ---------------------------------------------------------------- */
+
+.meld-kaart {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-left: 4px solid var(--groen);
+    border-radius: 4px;
+    padding: 1.2rem 1.3rem;
+    margin: 1.2rem 0 1.6rem;
+    max-width: 560px;
+}
+
+.meld-kop {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: .3rem;
+}
+
+.meld-kop h2 {
+    font-size: 1.15rem;
+    margin: 0;
+}
+.meld-kop h2::after { content: none; }
+
+.meld-teken {
+    width: 20px; height: 20px;
+    flex: none;
+    fill: none;
+    stroke: var(--groen);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.meld-kaart p { margin: 0 0 .8rem; color: var(--inkt-zacht); }
+
+.meld-knoppen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+}
+
+/* Het bolletje dat laat zien of de meldingen aanstaan. */
+.meld-stand {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-family: var(--sans);
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--inkt-zacht);
+}
+.meld-stand::before {
+    content: "";
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--lijn);
+    border: 1px solid #c9bda6;
+}
+.meld-stand-aan { color: var(--groen); }
+.meld-stand-aan::before { background: var(--groen); border-color: var(--groen); }
+
+.meld-hulp {
+    margin-top: .8rem;
+    padding-top: .8rem;
+    border-top: 1px solid var(--lijn);
+    font-size: .92rem;
+}
+.meld-hulp ol { margin: .4rem 0 0; padding-left: 1.3rem; }
+.meld-hulp li { margin-bottom: .3rem; }
+.meld-hulp p:last-child { margin-bottom: 0; }
+
+/* De balk die van boven inschuift als er iets binnenkomt terwijl je
+   het dashboard open hebt staan. */
+.meld-balk {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 60;
+    background: var(--groen);
+    color: #f2ece0;
+    padding: .8rem 1rem;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .28);
+    transform: translateY(-105%);
+    transition: transform .38s cubic-bezier(.22, .8, .3, 1);
+}
+.meld-balk-aan { transform: translateY(0); }
+
+.meld-balk-binnen {
+    max-width: var(--breed);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+}
+
+.meld-balk-teken {
+    width: 20px; height: 20px;
+    flex: none;
+    fill: none;
+    stroke: var(--goud-zacht);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.meld-balk-tekst { flex: 1; min-width: 0; }
+.meld-balk-titel {
+    display: block;
+    font-family: var(--sans);
+    font-size: .68rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--goud-zacht);
+}
+.meld-balk-regel {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.meld-balk a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+    font-family: var(--sans);
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+.meld-balk a:hover { color: var(--goud-zacht); }
+
+.meld-balk-sluit {
+    background: transparent;
+    border: 0;
+    color: #cdbfa5;
+    cursor: pointer;
+    padding: .2rem;
+    display: flex;
+    flex: none;
+}
+.meld-balk-sluit:hover { color: #fff; }
+.meld-balk-sluit svg {
+    width: 16px; height: 16px;
+    fill: none; stroke: currentColor;
+    stroke-width: 2; stroke-linecap: round;
+}
+
+@media (max-width: 620px) {
+    .meld-balk a { font-size: .66rem; }
+    .meld-balk-binnen { gap: .6rem; }
+}
+
+/* Iemand die liever geen bewegende dingen ziet. */
+@media (prefers-reduced-motion: reduce) {
+    .meld-balk { transition: none; }
+}
 
 /* ----------------------------------------------------------------
    Privacy en voorwaarden

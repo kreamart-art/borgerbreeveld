@@ -48,3 +48,18 @@
 <script src="assets/app.js?v=2"></script>
 </body>
 </html>
+<?php
+/*
+ * Helemaal onderaan, als de pagina al klaar is: kijken of het tijd is
+ * voor de dagelijkse herinnering aan wat er nog beoordeeld moet worden.
+ *
+ * Op gewone webhosting draait er niets vanzelf op de achtergrond. Daarom
+ * liften we mee op een gewoon bezoek aan de website. Meestal is dit
+ * alleen even een klein bestandje lezen; hooguit eens per dag wordt er
+ * echt iets verstuurd. De bezoeker merkt er niets van, want alle html
+ * staat hierboven al.
+ */
+if (function_exists('push_herinnering_indien_nodig')) {
+    push_herinnering_indien_nodig();
+}
+

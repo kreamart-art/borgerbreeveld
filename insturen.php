@@ -132,8 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return $data;
         });
 
-        // De familie een seintje geven dat er iets ligt.
+        // De familie een seintje geven dat er iets ligt: per e-mail
+        // en, als de meldingen aanstaan, meteen op de telefoon.
         meld_nieuwe_inzending($naam, $relatie, $tekst, count($bewaard), $email);
+        push_meld_inzending($naam, count($bewaard), trim($tekst) !== '');
     }
 
     $_SESSION['melding'] = ['bedankt' => true, 'waarschuwingen' => $waarschuwingen];

@@ -22,7 +22,7 @@ $JURIDISCH = [
     'beheerder_land' => 'Nederland',
 
     // Datum waarop deze teksten voor het laatst zijn aangepast.
-    'bijgewerkt' => '22 augustus 2026',
+    'bijgewerkt' => '23 augustus 2026',
 
 /* ------------------------------------------------------------------ */
 /* Privacyverklaring                                                   */
@@ -124,6 +124,32 @@ $JURIDISCH = [
                 'Familieleden die inloggen op het beheer krijgen datzelfde '
                 . 'cookie, plus een klein stukje opslag in hun browser dat '
                 . 'onthoudt of ze de uitleg over de app hebben weggeklikt.',
+            ],
+        ],
+
+        [
+            'kop' => 'Meldingen op de telefoon van de familie',
+            'tekst' => [
+                'Familieleden die op het beheer inloggen kunnen daar zelf '
+                . 'meldingen aanzetten, zodat ze een berichtje krijgen als '
+                . 'er iets is ingestuurd. Dit raakt bezoekers van deze '
+                . 'website niet: er wordt niets aangezet zonder dat iemand '
+                . 'daar zelf op tikt.',
+
+                'Zet iemand het aan, dan bewaren we van dat ene toestel een '
+                . 'adres dat de browser zelf aanmaakt, twee sleutels die bij '
+                . 'dat adres horen, en het soort toestel (bijvoorbeeld '
+                . '"iPhone"). Daar staat geen naam, telefoonnummer of '
+                . 'e-mailadres in, en we kunnen er niets anders mee dan een '
+                . 'melding sturen.',
+
+                'De inhoud van zo\'n melding wordt versleuteld verstuurd. '
+                . 'Het bedrijf dat de melding aflevert, Google of Apple, kan '
+                . 'niet meelezen wat erin staat.',
+
+                'Zet je de meldingen in het beheer weer uit, dan wordt dat '
+                . 'adres meteen gewist. Datzelfde gebeurt automatisch zodra '
+                . 'blijkt dat een toestel niet meer bestaat.',
             ],
         ],
 

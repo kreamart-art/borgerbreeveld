@@ -137,6 +137,33 @@ if (!MELD_NIEUWE_INZENDING) {
         . 'en toe in het dashboard, of vraag je hosting naar mail.');
 }
 
+// 6b. Meldingen op de telefoon
+// Browsers eisen https voor meldingen, met een uitzondering: op je
+// eigen computer (localhost) mag het ook zonder.
+$gastheer = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+$veiligeVerbinding = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || preg_match('/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i', $gastheer);
+if (!push_mogelijk()) {
+    punt($punten, 'let op', 'Deze server kan geen meldingen naar de telefoon sturen.',
+        push_waarom_niet() . ' De rest van de website werkt gewoon; je krijgt '
+        . 'alleen geen berichtje op je telefoon.');
+} elseif (!$veiligeVerbinding) {
+    punt($punten, 'moet nog', 'De meldingen werken nog niet: er is geen https.',
+        'Telefoons weigeren meldingen aan te zetten op een adres zonder het '
+        . 'slotje. Zorg eerst voor een certificaat, daarna kun je ze in het '
+        . 'dashboard aanzetten.');
+} else {
+    $toestellen = push_aantal_toestellen();
+    if ($toestellen > 0) {
+        punt($punten, 'goed', 'Meldingen staan aan op ' . $toestellen . ' '
+            . ($toestellen === 1 ? 'toestel' : 'toestellen') . '.');
+    } else {
+        punt($punten, 'let op', 'Meldingen kunnen wel, maar staan nog nergens aan.',
+            'Open het dashboard op je telefoon en tik bij "Meldingen op je '
+            . 'telefoon" op Meldingen aanzetten.');
+    }
+}
+
 // 7. De beveiliging van de mappen
 $sloten = is_file(UPLOAD_MAP . '/.htaccess') && is_file(DATA_MAP . '/.htaccess');
 if ($sloten) {

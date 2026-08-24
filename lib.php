@@ -967,3 +967,59 @@ function heeft_iets_over(array $inzending)
     }
     return trim($inzending['tekst']) !== '';
 }
+
+/* ------------------------------------------------------------------ */
+/* Wat er nog op beoordeling wacht                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Telt hoeveel losse foto's, video's en verhalen er nog wachten.
+ *
+ * Anders dan de tellers in het dashboard vraagt deze functie de rol
+ * gewoon als argument, zodat hij ook werkt als er niemand is ingelogd.
+ * Dat is nodig voor de meldingen: die worden verstuurd tijdens een
+ * gewoon bezoek aan de website.
+ */
+function wachtende_onderdelen(array $data, $rol)
+{
+    $aantal = 0;
+    foreach ($data['inzendingen'] as $inzending) {
+        if (!empty($inzending['weg'])) {
+            continue;
+        }
+        // De familie beoordeelt alleen de eigen verzameling.
+        if ($rol !== 'beheerder' && herkomst_van($inzending) !== 'familie') {
+            continue;
+        }
+        foreach ($inzending['bestanden'] as $bestand) {
+            if (empty($bestand['weg']) && empty($bestand['zichtbaar'])) {
+                $aantal++;
+            }
+        }
+        if (trim($inzending['tekst']) !== '' && empty($inzending['tekst_zichtbaar'])) {
+            $aantal++;
+        }
+    }
+    return $aantal;
+}
+
+/** Wanneer is er voor het laatst iets ingestuurd dat deze rol mag zien? */
+function laatste_inzending_tijd(array $data, $rol)
+{
+    $laatste = 0;
+    foreach ($data['inzendingen'] as $inzending) {
+        if (!empty($inzending['weg'])) {
+            continue;
+        }
+        if ($rol !== 'beheerder' && herkomst_van($inzending) !== 'familie') {
+            continue;
+        }
+        if (isset($inzending['datum']) && $inzending['datum'] > $laatste) {
+            $laatste = (int) $inzending['datum'];
+        }
+    }
+    return $laatste;
+}
+
+// De meldingen naar de telefoon zitten in een eigen bestand.
+require_once __DIR__ . '/push.php';

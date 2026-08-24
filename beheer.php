@@ -369,6 +369,18 @@ if ($filter === 'prullenbak' && !mag_verwijderen()) {
 $isBeheerder = (huidige_rol() === 'beheerder');
 $prullenbak  = aantal_in_prullenbak($data);
 
+// Meldingen op de telefoon. Standaard alleen voor de beheerder; met de
+// schakelaar MELDINGEN_VOOR_FAMILIE in config.php krijgt de familie ze ook.
+$magMeldingen = push_mogelijk()
+    && ($isBeheerder || (defined('MELDINGEN_VOOR_FAMILIE') && MELDINGEN_VOOR_FAMILIE));
+$pushSleutel    = $magMeldingen ? push_publieke_sleutel() : '';
+$pushToestellen = $magMeldingen ? push_aantal_toestellen(huidige_rol()) : 0;
+
+// Waar de pagina nu staat, zodat we kunnen zien of er iets bijkomt
+// terwijl het dashboard openstaat.
+$nuWachtend = wachtende_onderdelen($data, huidige_rol());
+$nuLaatste  = laatste_inzending_tijd($data, huidige_rol());
+
 // Bij een grote verzameling tonen we niet alles in één keer.
 const BEHEER_EERSTE = 24;
 $openId = isset($_GET['alles']) ? (string) $_GET['alles'] : '';
@@ -514,6 +526,30 @@ $token = csrf_token();
 </head>
 <body class="beheer-body">
 
+<!-- Schuift van boven in als er iets binnenkomt terwijl je het
+     dashboard open hebt staan. -->
+<div class="meld-balk" id="meld-balk" role="status" aria-live="polite"
+     data-wacht="<?= (int) $nuWachtend ?>" data-laatste="<?= (int) $nuLaatste ?>">
+    <div class="meld-balk-binnen">
+        <svg class="meld-balk-teken" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"></path>
+            <path d="M10.5 20a1.8 1.8 0 0 0 3 0"></path>
+        </svg>
+        <span class="meld-balk-tekst">
+            <span class="meld-balk-titel" id="meld-balk-titel">Nieuw</span>
+            <span class="meld-balk-regel" id="meld-balk-regel"></span>
+        </span>
+        <a href="beheer.php?filter=wacht" id="meld-balk-link">Bekijken</a>
+        <button type="button" class="meld-balk-sluit" id="meld-balk-sluit"
+                aria-label="Deze melding sluiten">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M6 6l12 12M18 6L6 18"></path>
+            </svg>
+        </button>
+    </div>
+</div>
+
+
 <header class="beheer-balk">
     <div class="binnen beheer-balk-binnen">
         <span class="beheer-titel">Beheer</span>
@@ -618,6 +654,68 @@ $token = csrf_token();
             </ol>
         </div>
     </div>
+
+    <?php if ($magMeldingen): ?>
+    <!-- Meldingen op de telefoon aanzetten. Wat hier gebeurt staat
+         helemaal onderaan deze pagina in het script uitgelegd. -->
+    <div class="meld-kaart" id="meld-kaart"
+         data-sleutel="<?= h($pushSleutel) ?>"
+         data-csrf="<?= h(csrf_token()) ?>"
+         data-toestellen="<?= (int) $pushToestellen ?>" hidden>
+        <div class="meld-kop">
+            <svg class="meld-teken" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"></path>
+                <path d="M10.5 20a1.8 1.8 0 0 0 3 0"></path>
+            </svg>
+            <h2>Meldingen op je telefoon</h2>
+        </div>
+
+        <p id="meld-uitleg">Krijg een berichtje zodra er iets wordt
+            ingestuurd, ook als het dashboard dichtstaat. En eens per dag
+            een herinnering zolang er nog iets op beoordeling wacht.</p>
+
+        <div class="meld-knoppen">
+            <button type="button" class="knop" id="meld-aan" hidden>
+                Meldingen aanzetten
+            </button>
+            <button type="button" class="knop knop-stil" id="meld-uit" hidden>
+                Uitzetten op dit toestel
+            </button>
+            <button type="button" class="knop knop-stil knop-klein" id="meld-proef" hidden>
+                Probeer er een
+            </button>
+            <span class="meld-stand" id="meld-stand" hidden>Staat uit</span>
+        </div>
+
+        <!-- Op een iPhone werkt dit alleen als het dashboard eerst als
+             app op het beginscherm staat. Dat is een regel van Apple. -->
+        <div class="meld-hulp" id="meld-iphone" hidden>
+            <p><strong>Op een iPhone of iPad</strong> kan dit pas als het
+                dashboard als app op je beginscherm staat:</p>
+            <ol>
+                <li>Tik onderaan in Safari op de deelknop
+                    <svg class="app-teken" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M12 15V4m0 0L8 8m4-4 4 4"></path>
+                        <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"></path>
+                    </svg></li>
+                <li>Kies <strong>Zet op beginscherm</strong></li>
+                <li>Open het dashboard vanaf je beginscherm en zet de
+                    meldingen daar aan</li>
+            </ol>
+        </div>
+
+        <div class="meld-hulp" id="meld-geweigerd" hidden>
+            <p>De meldingen staan geblokkeerd voor deze website. Dat kun
+                je alleen zelf terugzetten, in de instellingen van je
+                telefoon of browser bij <strong>Meldingen</strong>.</p>
+        </div>
+
+        <div class="meld-hulp" id="meld-kan-niet" hidden>
+            <p>Deze browser kan geen meldingen tonen. Probeer het op je
+                telefoon, of gebruik Chrome, Edge of Safari.</p>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <div class="filters" role="group" aria-label="Filter">
         <a class="filter <?= $filter === 'alles' ? 'filter-aan' : '' ?>"
@@ -933,6 +1031,239 @@ $token = csrf_token();
     document.getElementById('app-kaart-sluit').addEventListener('click', function () {
         kaart.hidden = true;
         try { localStorage.setItem('app-kaart-weg', '1'); } catch (e) {}
+    });
+}());
+
+/* ------------------------------------------------------------------
+   Meldingen op je telefoon aan- en uitzetten
+   ------------------------------------------------------------------
+   Kort wat hier gebeurt: de browser maakt een eigen postadres aan waar
+   meldingen naartoe mogen, samen met twee sleutels. Dat adres en die
+   sleutels geven we door aan de website, die bewaart ze. Later stuurt de
+   website daar een versleuteld berichtje naartoe. Het adres hoort bij
+   deze ene telefoon, dus je zet de meldingen per toestel aan.
+   ------------------------------------------------------------------ */
+(function () {
+    'use strict';
+
+    var kaart = document.getElementById('meld-kaart');
+    if (!kaart) { return; }
+    kaart.hidden = false;
+
+    var sleutel   = kaart.getAttribute('data-sleutel');
+    var csrf      = kaart.getAttribute('data-csrf');
+    var aanKnop   = document.getElementById('meld-aan');
+    var uitKnop   = document.getElementById('meld-uit');
+    var proefKnop = document.getElementById('meld-proef');
+    var stand     = document.getElementById('meld-stand');
+    var uitleg    = document.getElementById('meld-uitleg');
+
+    function toon(id, ja) {
+        var el = document.getElementById(id);
+        if (el) { el.hidden = !ja; }
+    }
+
+    var kanHet = ('serviceWorker' in navigator)
+              && ('PushManager' in window)
+              && ('Notification' in window);
+    var alsApp  = window.matchMedia('(display-mode: standalone)').matches
+              || window.navigator.standalone === true;
+    var isApple = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (!kanHet || !sleutel) {
+        /* Op een iPhone kan dit pas als het dashboard als app op het
+           beginscherm staat. Dat is een regel van Apple, niet van ons. */
+        toon(isApple && !alsApp ? 'meld-iphone' : 'meld-kan-niet', true);
+        return;
+    }
+    if (Notification.permission === 'denied') {
+        toon('meld-geweigerd', true);
+        return;
+    }
+
+    /* De sleutel komt als tekst binnen, de browser wil er bytes van. */
+    function sleutelNaarBytes(tekst) {
+        var vulling = (4 - (tekst.length % 4)) % 4;
+        var recht = (tekst + new Array(vulling + 1).join('='))
+            .replace(/-/g, '+').replace(/_/g, '/');
+        var ruw = window.atob(recht);
+        var bytes = new Uint8Array(ruw.length);
+        for (var i = 0; i < ruw.length; i++) {
+            bytes[i] = ruw.charCodeAt(i);
+        }
+        return bytes;
+    }
+
+    function naarServer(velden) {
+        var lijf = new FormData();
+        Object.keys(velden).forEach(function (naam) {
+            lijf.append(naam, velden[naam]);
+        });
+        lijf.append('csrf', csrf);
+        return fetch('melding.php', {
+            method: 'POST',
+            body: lijf,
+            credentials: 'same-origin'
+        }).then(function (antwoord) { return antwoord.json(); });
+    }
+
+    var abonnement = null;
+
+    function werkBij() {
+        var aan = !!abonnement;
+        aanKnop.hidden    = aan;
+        uitKnop.hidden    = !aan;
+        proefKnop.hidden  = !aan;
+        stand.hidden      = false;
+        stand.textContent = aan ? 'Staat aan op dit toestel' : 'Staat uit';
+        stand.className   = 'meld-stand' + (aan ? ' meld-stand-aan' : '');
+    }
+
+    navigator.serviceWorker.register('sw.js').then(function () {
+        return navigator.serviceWorker.ready;
+    }).then(function (reg) {
+        return reg.pushManager.getSubscription();
+    }).then(function (huidig) {
+        abonnement = huidig;
+        werkBij();
+    })['catch'](function () {
+        toon('meld-kan-niet', true);
+    });
+
+    aanKnop.addEventListener('click', function () {
+        aanKnop.disabled = true;
+        Promise.resolve(Notification.requestPermission()).then(function (antwoord) {
+            if (antwoord !== 'granted') {
+                toon('meld-geweigerd', antwoord === 'denied');
+                throw new Error('geen-toestemming');
+            }
+            return navigator.serviceWorker.ready;
+        }).then(function (reg) {
+            return reg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: sleutelNaarBytes(sleutel)
+            });
+        }).then(function (nieuw) {
+            var kopie = nieuw.toJSON();
+            return naarServer({
+                actie:    'aanmelden',
+                endpoint: nieuw.endpoint,
+                p256dh:   kopie.keys.p256dh,
+                auth:     kopie.keys.auth
+            }).then(function (uitkomst) {
+                if (!uitkomst.ok) { throw new Error('aanmelden-mislukt'); }
+                abonnement = nieuw;
+                werkBij();
+            });
+        })['catch'](function (fout) {
+            if (fout && fout.message !== 'geen-toestemming') {
+                uitleg.textContent = 'Het aanzetten lukte niet. '
+                    + 'Probeer het zo nog eens.';
+            }
+        }).then(function () {
+            aanKnop.disabled = false;
+        });
+    });
+
+    uitKnop.addEventListener('click', function () {
+        if (!abonnement) { return; }
+        uitKnop.disabled = true;
+        var adres = abonnement.endpoint;
+        abonnement.unsubscribe().then(function () {
+            return naarServer({ actie: 'afmelden', endpoint: adres });
+        }).then(function () {
+            abonnement = null;
+            werkBij();
+        })['catch'](function () {
+            /* niets aan te doen, de knop komt gewoon weer vrij */
+        }).then(function () {
+            uitKnop.disabled = false;
+        });
+    });
+
+    proefKnop.addEventListener('click', function () {
+        proefKnop.disabled = true;
+        var oud = proefKnop.textContent;
+        naarServer({ actie: 'test' }).then(function (uitkomst) {
+            proefKnop.textContent = uitkomst.ok ? 'Onderweg' : 'Lukte niet';
+        })['catch'](function () {
+            proefKnop.textContent = 'Lukte niet';
+        }).then(function () {
+            setTimeout(function () {
+                proefKnop.textContent = oud;
+                proefKnop.disabled = false;
+            }, 2500);
+        });
+    });
+}());
+
+/* ------------------------------------------------------------------
+   De balk die inschuift als er iets binnenkomt terwijl je kijkt
+   ------------------------------------------------------------------ */
+(function () {
+    'use strict';
+
+    var balk = document.getElementById('meld-balk');
+    if (!balk) { return; }
+
+    var titelEl = document.getElementById('meld-balk-titel');
+    var regelEl = document.getElementById('meld-balk-regel');
+    var linkEl  = document.getElementById('meld-balk-link');
+    var wacht   = parseInt(balk.getAttribute('data-wacht'), 10) || 0;
+    var laatste = parseInt(balk.getAttribute('data-laatste'), 10) || 0;
+    var klok    = null;
+
+    function toonBalk(titel, tekst, adres) {
+        titelEl.textContent = titel || 'Nieuw';
+        regelEl.textContent = tekst || '';
+        if (adres) { linkEl.setAttribute('href', adres); }
+        balk.classList.add('meld-balk-aan');
+        if (klok) { clearTimeout(klok); }
+        klok = setTimeout(verberg, 14000);
+    }
+    function verberg() {
+        balk.classList.remove('meld-balk-aan');
+    }
+    document.getElementById('meld-balk-sluit').addEventListener('click', verberg);
+
+    /* Komt er een melding binnen terwijl deze pagina openstaat, dan geeft
+       de service worker hier een seintje. Dan hoeven we niet te wachten
+       tot de volgende controle. */
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('message', function (e) {
+            if (e.data && e.data.soort === 'melding') {
+                toonBalk(e.data.titel, e.data.tekst, e.data.adres);
+            }
+        });
+    }
+
+    /* En zelf af en toe navragen, zodat het ook werkt als de meldingen
+       uitstaan of als je op de computer zit. */
+    function kijk() {
+        if (document.hidden) { return; }
+        fetch('melding.php?actie=stand', { credentials: 'same-origin' })
+            .then(function (antwoord) { return antwoord.json(); })
+            .then(function (nu) {
+                if (!nu || !nu.ok) { return; }
+                if (nu.laatste > laatste) {
+                    toonBalk('Nieuw ingestuurd',
+                        'Er is zojuist iets ingestuurd.',
+                        'beheer.php?filter=wacht');
+                } else if (nu.wacht > wacht) {
+                    toonBalk('Nieuw',
+                        'Er wacht iets nieuws op beoordeling.',
+                        'beheer.php?filter=wacht');
+                }
+                if (nu.laatste > laatste) { laatste = nu.laatste; }
+                wacht = nu.wacht;
+            })['catch'](function () {
+                /* even geen verbinding, dan kijken we straks weer */
+            });
+    }
+
+    setInterval(kijk, 45000);
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) { kijk(); }
     });
 }());
 </script>

@@ -42,6 +42,18 @@ define('CONTACT_EMAIL', getenv('BORGER_CONTACT_EMAIL') ?: 'info@voorbeeld.nl');
  */
 const MELD_NIEUWE_INZENDING = true;
 
+/*
+ * Krijgt ook het familie-account meldingen op de telefoon?
+ *
+ * Standaard nee: de meldingen zijn voor de beheerder. Zet dit op true
+ * als de familie ze ook wil, dan verschijnt het blokje "Meldingen op je
+ * telefoon" ook bij hen in het dashboard. Ze krijgen dan alleen
+ * herinneringen over hun eigen verzameling, nooit over wat bezoekers
+ * insturen.
+ */
+const MELDINGEN_VOOR_FAMILIE = false;
+
+
 /**
  * Het adres waar die melding vandaan lijkt te komen. Neem een adres van
  * je eigen domein, anders belandt de mail vaak in de spam. Laat je het
