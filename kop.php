@@ -91,7 +91,7 @@ $basisAdres = ($veilig ? 'https://' : 'http://')
 
 <link rel="icon" href="assets/pwa/site-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/pwa/site-apple-touch-icon.png">
-<link rel="stylesheet" href="assets/style.css?v=3">
+<link rel="stylesheet" href="assets/style.css?v=4">
 </head>
 <body>
 
@@ -148,11 +148,11 @@ $basisAdres = ($veilig ? 'https://' : 'http://')
                     <source type="image/webp"
                             srcset="media/<?= h($bannerNaam) ?>-800.webp 800w,
                                     media/<?= h($bannerNaam) ?>.webp 1519w"
-                            sizes="(min-width: 1080px) 1048px, 100vw">
+                            sizes="100vw">
                     <img src="media/<?= h($bannerNaam) ?>.jpg"
                          srcset="media/<?= h($bannerNaam) ?>-800.jpg 800w,
                                  media/<?= h($bannerNaam) ?>.jpg 1519w"
-                         sizes="(min-width: 1080px) 1048px, 100vw" width="1519" height="1035" fetchpriority="high"
+                         sizes="100vw" width="1519" height="1035" fetchpriority="high"
                          alt="<?= h($bannerAlt) ?>">
                 <?php else: ?>
                     <img src="<?= h($banner) ?>" fetchpriority="high"

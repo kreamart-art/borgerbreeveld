@@ -23,22 +23,6 @@
     --breed:  1080px;
     --smal:   680px;
 
-    /* Hoe de zijkanten van de banner wegvallen in het groen. Een gebogen
-       verloop: snel wegvallen bij de rand, daarna steeds trager. */
-    --rand-uitdoving: radial-gradient(50% 260% at 50% 40%,
-        rgba(0, 0, 0, 1)   0%,
-        rgba(0, 0, 0, 1)  50%,
-        rgba(0, 0, 0, .98) 58%,
-        rgba(0, 0, 0, .93) 65%,
-        rgba(0, 0, 0, .84) 71%,
-        rgba(0, 0, 0, .71) 77%,
-        rgba(0, 0, 0, .55) 82%,
-        rgba(0, 0, 0, .38) 87%,
-        rgba(0, 0, 0, .22) 91%,
-        rgba(0, 0, 0, .10) 95%,
-        rgba(0, 0, 0, .03) 97%,
-        rgba(0, 0, 0, 0)   99%,
-        rgba(0, 0, 0, 0)  100%);
 }
 
 * { box-sizing: border-box; }
@@ -222,13 +206,26 @@ img, video { max-width: 100%; display: block; }
     padding: 3.2rem 1rem 3.6rem;
 }
 
-/* Op de hoofdpagina vult de banner een hoog vlak. */
+/* Op de hoofdpagina vult de banner het hele vlak, over de volle breedte
+   van het scherm.
+
+   De hoogte volgt de foto in plaats van andersom: het vlak krijgt precies
+   de verhouding van de banner (1519 bij 1035). Daardoor past de foto er
+   altijd helemaal op en wordt er niets afgesneden, hoe breed het scherm
+   ook is. Op een telefoon geldt dit niet, daar staat de foto los bovenaan
+   met de tekst eronder; zie het blok onderaan dit bestand. */
 .hero-groot {
-    min-height: min(82vh, 760px);
     display: flex;
     align-items: flex-end;
     padding-top: 6rem;
     padding-bottom: 4rem;
+}
+
+@media (min-width: 621px) {
+    .hero-groot {
+        aspect-ratio: 1519 / 1035;
+        min-height: 0;
+    }
 }
 
 /* Op de andere pagina's is de banner een smallere band met de
@@ -278,45 +275,6 @@ img, video { max-width: 100%; display: block; }
     display: block;
     width: 100%;
     height: 100%;
-}
-
-/* De foto is even breed als de tekstkolom in de bovenbalk: van de naam
-   links tot de knop rechts. Op een breed scherm blijft er dus aan beide
-   kanten groen over.
-
-   De overgang naar dat groen is geen rechte snee en ook geen strak
-   bandje, maar een brede uitdoving met een gebogen verloop: dichtbij de
-   rand valt het beeld snel weg, daarna steeds langzamer. Zo lijkt het
-   alsof het licht op de foto naar de zijkanten wegvalt, zoals bij een
-   filmstill. Daarom staan er zoveel tussenstappen: met alleen begin en
-   eind krijg je een zichtbare veeg. */
-@media (min-width: 1080px) {
-    .hero-groot,
-    .hero-klein {
-        /* De buitenranden dieper maken, zodat de foto in schaduw
-           oplost en niet in een lichter groen vlak. */
-        background:
-            linear-gradient(to right,
-                var(--groen-diep) 0%,
-                rgba(11, 42, 31, .92) 6%,
-                rgba(11, 42, 31, .55) 13%,
-                rgba(11, 42, 31, .18) 20%,
-                rgba(11, 42, 31, 0) 27%,
-                rgba(11, 42, 31, 0) 73%,
-                rgba(11, 42, 31, .18) 80%,
-                rgba(11, 42, 31, .55) 87%,
-                rgba(11, 42, 31, .92) 94%,
-                var(--groen-diep) 100%),
-            radial-gradient(120% 90% at 50% 0%,
-                #164b37 0%, var(--groen) 45%, var(--groen-diep) 100%);
-    }
-
-    .banner-beeld {
-        max-width: calc(var(--breed) - 2rem);
-        margin: 0 auto;
-        -webkit-mask-image: var(--rand-uitdoving);
-                mask-image: var(--rand-uitdoving);
-    }
 }
 
 .banner img {
