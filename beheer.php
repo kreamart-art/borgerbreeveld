@@ -361,8 +361,13 @@ $filter = isset($_GET['filter']) ? (string) $_GET['filter'] : 'alles';
 if (!in_array($filter, ['alles', 'wacht', 'zichtbaar', 'prullenbak'], true)) {
     $filter = 'alles';
 }
-// De prullenbak is alleen voor de beheerder.
+// De prullenbak en het scherm "wacht op beoordeling" zijn alleen voor de
+// beheerder. De familie beoordeelt de eigen verzameling en hoeft niet te
+// zien wat er van bezoekers binnenkomt.
 if ($filter === 'prullenbak' && !mag_verwijderen()) {
+    $filter = 'alles';
+}
+if ($filter === 'wacht' && huidige_rol() !== 'beheerder') {
     $filter = 'alles';
 }
 
@@ -539,7 +544,8 @@ $token = csrf_token();
             <span class="meld-balk-titel" id="meld-balk-titel">Nieuw</span>
             <span class="meld-balk-regel" id="meld-balk-regel"></span>
         </span>
-        <a href="beheer.php?filter=wacht" id="meld-balk-link">Bekijken</a>
+        <a href="beheer.php?filter=<?= $isBeheerder ? 'wacht' : 'alles' ?>"
+           id="meld-balk-link">Bekijken</a>
         <button type="button" class="meld-balk-sluit" id="meld-balk-sluit"
                 aria-label="Deze melding sluiten">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -1210,6 +1216,7 @@ $token = csrf_token();
     var regelEl = document.getElementById('meld-balk-regel');
     var linkEl  = document.getElementById('meld-balk-link');
     var wacht   = parseInt(balk.getAttribute('data-wacht'), 10) || 0;
+    var doeladres = linkEl.getAttribute('href');
     var laatste = parseInt(balk.getAttribute('data-laatste'), 10) || 0;
     var klok    = null;
 
@@ -1248,11 +1255,11 @@ $token = csrf_token();
                 if (nu.laatste > laatste) {
                     toonBalk('Nieuw ingestuurd',
                         'Er is zojuist iets ingestuurd.',
-                        'beheer.php?filter=wacht');
+                        doeladres);
                 } else if (nu.wacht > wacht) {
                     toonBalk('Nieuw',
                         'Er wacht iets nieuws op beoordeling.',
-                        'beheer.php?filter=wacht');
+                        doeladres);
                 }
                 if (nu.laatste > laatste) { laatste = nu.laatste; }
                 wacht = nu.wacht;
